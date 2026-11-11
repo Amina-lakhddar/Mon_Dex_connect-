@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  /* Bouton principal */
+  .btn-primary {
+    @apply h-12 px-6 rounded-xl bg-brand text-white font-bold;
+  }
+
+  /* Bouton secondaire (contour) */
+  .btn-outline {
+    @apply h-11 px-4 rounded-xl border-2 border-ink bg-white text-ink font-bold outline-none;
+  }
+
+  /* Bouton de filtre par type */
+  .chip {
+    @apply h-11 px-5 rounded-full border-2 border-line bg-white text-ink font-bold outline-none;
+  }
+
+  /* Champ de formulaire */
+  .field {
+    @apply h-12 rounded-xl border-2 border-line bg-white px-3 text-base outline-none;
+  }
+}
+
+.poke_back{
+    position: relative;
+    isolation: isolate;
+}
+
+.poke_back::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url(https://i.pinimg.com/originals/1f/2c/9e/1f2c9e9c4de69c7f0e2d6fcf98bb7674.jpg);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    opacity: 0.4;
+    z-index: -1;
+}
+.chip {
+  height: 2.75rem;
+  border-radius: 9999px;
+  border-width: 2px;
+  --tw-border-opacity: 1;
+  border-color: rgb(249 115 22 / var(--tw-bg-opacity, 1));
+  --tw-bg-opacity: 1;
+  background-color:rgb(249 115 22 / var(--tw-bg-opacity, 1));
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  font-weight: 700;
+  --tw-text-opacity: 1;
+  color: white;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.img_card{
+  width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.span-card{
+  position: absolute;
+  left: 12px;
+  top: 8px;
+  font-size: 14px;
+  color: black;
+  font-size: 20px;
+  font-weight: 100;
+}
+
+.btn-outline {
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  border-width: 2px;
+  --tw-border-opacity: 1;
+  border-color: rgb(249 115 22 / var(--tw-bg-opacity, 1));
+  --tw-bg-opacity: 1;
+  background-color: rgb(249 115 22 / var(--tw-bg-opacity, 1));
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-weight: 700;
+  --tw-text-opacity: 1;
+  color: white;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  height: 3rem;
+  border-radius: 0.75rem;
+  --tw-bg-opacity: 1;
+  background-color: rgb(249 115 22 / var(--tw-bg-opacity, 1));
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  font-weight: 700;
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+
+.success {
+    border-color: green;
+}
+
+.error {
+    border-color: red;
+}
+
+#message {
+    display: block;
+    margin-top: 5px;
+}
+
+.message-success {
+    color: green;
+}
+
+.message-error {
+    color: red;
+}
