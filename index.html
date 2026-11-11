@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="./src/input.css">
 </head>
 
-<body class= "bg-ground font-body text-ink poke_back w-[100%] ">
+<body class="bg-ground font-body text-ink poke_back w-[100%] ">
 
   <!-- ===================== EN-TÊTE ===================== -->
   <header class="bg-orange-500 text-white fixed w-full z-50">
@@ -56,7 +56,8 @@
     <div class="flex gap-8 flex-col w-[100%] justify-between md:flex-row">
 
       <!-- ===================== GRILLE DES CRÉATURES ===================== -->
-      <section id="grid" aria-label="Créatures" class="flex flex-col w-full flex-wrap items-center  border lg:flex-row gap-3 ">
+      <section id="grid" aria-label="Créatures"
+        class="flex flex-col w-full flex-wrap items-center  border lg:flex-row gap-3 ">
       </section>
 
       <aside class="flex w-[420px] shrink-0 flex-col gap-6">
@@ -69,7 +70,8 @@
             <button type="button" aria-label="Fermer le détail" class="btn-outline w-11 px-0">✕</button>
           </div>
           <div class="flex h-48 items-center justify-center rounded-2xl bg-brand-light">
-            <img src="https://i.pinimg.com/originals/1f/2c/9e/1f2c9e9c4de69c7f0e2d6fcf98bb7674.jpg" alt="" class="img_card">
+            <img src="https://i.pinimg.com/originals/1f/2c/9e/1f2c9e9c4de69c7f0e2d6fcf98bb7674.jpg" alt=""
+              class="img_card">
           </div>
           <div class="flex items-center justify-between">
             <h2 class="font-display text-3xl font-extrabold text-orange-700">Mossling</h2>
@@ -78,53 +80,56 @@
           <p class="text-gray-700">Une créature calme qui dort sous les feuilles mortes et se réveille quand il pleut.
           </p>
           <div class="flex flex-col gap-2 text-sm">
-            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold text-orange-700">PV</span><span
-                class="h-3 rounded-full bg-ground"><span
+            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span
+                class="font-bold text-orange-700">PV</span><span class="h-3 rounded-full bg-ground"><span
                   class="block h-3 w-[30%] rounded-full bg-orange-500"></span></span><span
                 class="text-right font-mono">45</span></div>
-            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold text-orange-700">Attaque</span><span
-                class="h-3 rounded-full bg-ground"><span
+            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span
+                class="font-bold text-orange-700">Attaque</span><span class="h-3 rounded-full bg-ground"><span
                   class="block h-3 w-[33%] rounded-full bg-orange-500"></span></span><span
                 class="text-right font-mono">49</span></div>
-            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold text-orange-700">Défense</span><span
-                class="h-3 rounded-full bg-ground"><span
+            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span
+                class="font-bold text-orange-700">Défense</span><span class="h-3 rounded-full bg-ground"><span
                   class="block h-3 w-[43%] rounded-full bg-orange-500"></span></span><span
                 class="text-right font-mono">65</span></div>
           </div>
-          <button
-              type="button"
-              id="detail-add"
-              class="btn-primary">
-              Ajouter à l'équipe
+          <button type="button" id="detail-add" class="btn-primary">
+            Ajouter à l'équipe
           </button>
         </section>
 
         <!-- ===================== MON ÉQUIPE (INCOMPLÈTE) ===================== -->
-        
+
         <section id="team" aria-label="Mon équipe" class="rounded-card bg-white p-6">
 
-            <div class="flex items-center justify-between">
-                <h2 class="font-display text-2xl font-extrabold text-orange-700">
-                    Mon équipe
-                </h2>
+          <div class="flex items-center justify-between">
+            <h2 class="font-display text-2xl font-extrabold text-orange-700">
+              Mon équipe
+            </h2>
 
-                <span id="compteur" class="font-bold text-orange-700">0/6</span>
+            <span id="compteur" class="font-bold text-orange-700">0/6</span>
+          </div>
+
+          <div id="emplacements" class="mt-4 grid grid-cols-3 gap-3">
+
+            <div class="flex h-20 items-center justify-center rounded-xl border-2 border-dashed border-orange-300">+
+            </div>
+            <div class="flex h-20 items-center justify-center rounded-xl border-2 border-dashed border-orange-300">+
+            </div>
+            <div class="flex h-20 items-center justify-center rounded-xl border-2 border-dashed border-orange-300">+
+            </div>
+            <div class="flex h-20 items-center justify-center rounded-xl border-2 border-dashed border-orange-300">+
+            </div>
+            <div class="flex h-20 items-center justify-center rounded-xl border-2 border-dashed border-orange-300">+
+            </div>
+            <div class="flex h-20 items-center justify-center rounded-xl border-2 border-dashed border-orange-300">+
             </div>
 
-            <div id="emplacements" class="mt-4 grid grid-cols-3 gap-3">
+          </div>
 
-                <div class="flex h-20 items-center justify-center rounded-xl border-2 border-dashed border-orange-300">+</div>
-                <div class="flex h-20 items-center justify-center rounded-xl border-2 border-dashed border-orange-300">+</div>
-                <div class="flex h-20 items-center justify-center rounded-xl border-2 border-dashed border-orange-300">+</div>
-                <div class="flex h-20 items-center justify-center rounded-xl border-2 border-dashed border-orange-300">+</div>
-                <div class="flex h-20 items-center justify-center rounded-xl border-2 border-dashed border-orange-300">+</div>
-                <div class="flex h-20 items-center justify-center rounded-xl border-2 border-dashed border-orange-300">+</div>
-
-            </div>
-
-            <p id="message-regles" class="mt-4 text-sm text-gray-600">
-                Maximum 6 créatures. Chaque créature ne peut être ajoutée qu'une seule fois.
-            </p>
+          <p id="message-regles" class="mt-4 text-sm text-gray-600">
+            Maximum 6 créatures. Chaque créature ne peut être ajoutée qu'une seule fois.
+          </p>
 
         </section>
 
@@ -148,7 +153,7 @@
           <span id="error-message-name" class="error-message text-sm font-normal text-muted"></span>
         </label>
         <label class="flex flex-col gap-1 text-sm font-bold">Type
-          <select id="type" name="type" class="field font-normal" >
+          <select id="type" name="type" class="field font-normal">
             <option value="">Choisir un type</option>
             <option>Feu</option>
             <option>Eau</option>
@@ -164,7 +169,7 @@
           <span class="error-message text-sm font-normal text-muted"></span>
         </label>
         <label class="flex flex-col gap-1 text-sm font-bold">Statistique 1
-          <input name="stat1" id="stat1" type="text" placeholder="0 à 999" class="field font-normal" >
+          <input name="stat1" id="stat1" type="text" placeholder="0 à 999" class="field font-normal">
           <span id="error-message-stat1" class="error-message attext-sm font-normal text-muted"></span>
         </label>
         <label class="flex flex-col gap-1 text-sm font-bold">Statistique 2
@@ -198,8 +203,8 @@
   </footer>
 
   <!-- data.js (à créer) doit être chargé AVANT script.js -->
-  <script src="./data.js"></script>
-  <script src="./script.js"></script>
+
+  <script type="module" src="./src/main.js"></script>
 </body>
 
 </html>
