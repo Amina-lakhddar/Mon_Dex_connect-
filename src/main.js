@@ -1,9 +1,13 @@
 import { getData, creatures, incrementerOffset, decrementerOffset} from "./services/api.js";
-import { afficher, section_article ,filter} from "./ui.js";
+import { afficher, section_article ,filter, rechercher,effacerRecherche, detail} from "./ui.js";
 
 getData().then(() => {
     afficher(creatures);
     filter();
+     rechercher();
+     effacerRecherche();
+     detail()
+     
 });
 
 // charger plus des  creatures
@@ -15,6 +19,7 @@ button_charger.addEventListener("click", async function () {
     await getData();
 
     afficher(creatures);
+    detail()
 });
 
 // revenir au precedent
@@ -24,4 +29,5 @@ button_precedent.addEventListener("click",async function(){
     await getData();
     section_article.innerHTML = "";
     afficher(creatures)
+    detail();
 })
