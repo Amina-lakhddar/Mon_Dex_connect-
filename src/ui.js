@@ -1,4 +1,4 @@
-import { creatures } from "./services/api.js";
+import { creatures, rechercherPokemon} from "./services/api.js";
 
 
 
@@ -142,22 +142,30 @@ export function afficher(creatures) {
 
 
 // // -------------------------------------------------------------
-// // 3. RECHERCHE
-// function rechercher() {
-//     let search = document.querySelector("#search");
+// 3. RECHERCHE
+export function rechercher() {
+    let search = document.querySelector("#search");
 
-//     search.addEventListener("input", function () {
-//         let valeur = search.value.toLowerCase();
+    search.addEventListener("change", async function () {
 
-//         let resultat = creatures.filter(function (creature) {
-//             return creature.name.toLowerCase().includes(valeur);
-//         });
+        let valeur = search.value.trim().toLowerCase();
 
-//         afficher(resultat);
-//         detail();
-//     });
-// }
+        if (valeur === "") {
+            afficher(creatures);
+            return;
+        }
 
+        let resultat = await rechercherPokemon(valeur);
+
+        section_article.innerHTML = "";
+
+        if (resultat !== null) {
+            afficher([resultat]);
+        } else {
+            section_article.innerHTML = "<p>Pokémon introuvable !</p>";
+        }
+    });
+}
 // rechercher();
 // // La liste se met à jour pendant la saisie d'un nom
 // // (sans tenir compte des majuscules).
