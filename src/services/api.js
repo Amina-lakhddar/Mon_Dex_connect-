@@ -1,3 +1,4 @@
+
 export const limit=20;
 export let offset=0;
 export let BASE_URL = `https://pokeapi.co/api/v2/pokemon`;
@@ -11,6 +12,7 @@ export async function getData() {
             for (const pokem of data.results) {
                 promises.push(
                     fetch(pokem.url)
+
                         .then((response) => response.json())
                 );
             }
@@ -20,6 +22,7 @@ export async function getData() {
         .then((data) => {
             creatures = data.map(obj => transformObj(obj));
         });
+
 }
 
 // fonction transformer l api en objet simple
@@ -56,6 +59,7 @@ export function transformObj(obj) {
 
 
 
+
 // fonction incrementer offset
 export function incrementerOffset(){
     offset+=limit;
@@ -69,6 +73,7 @@ export function decrementerOffset(){
         offset-=limit
     }
 }
+
 
 
 // fonction rechercher pokemon
@@ -115,3 +120,4 @@ export async function getPokemonDetail(id) {
         return null;
     }
 }
+
