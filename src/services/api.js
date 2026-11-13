@@ -61,12 +61,15 @@ export function decrementerOffset(){
         offset-=limit
     }
 }
-// {
-//     id: "#001",
-//     name: "Exemple",
-//     type: "Feu",
-//     level: "Base",
-//     stats: { hp: 45, attack: 49, defence: 49 },
-//     image: "https://example.com/001.png",
-//     description: "Une courte description de la créature."
-//   }
+
+export async function rechercherPokemon(nom) {
+    let response = await fetch(`${BASE_URL}/${nom}`);
+
+    if (!response.ok) {
+        return null;
+    }
+
+    let data = await response.json();
+
+    return transformObj(data);
+}
