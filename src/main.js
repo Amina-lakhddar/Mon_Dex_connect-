@@ -1,9 +1,10 @@
 import { getData, creatures, incrementerOffset, decrementerOffset} from "./services/api.js";
-import { afficher, section_article ,filter} from "./ui.js";
+import { afficher, section_article ,filter, rechercher} from "./ui.js";
 
 getData().then(() => {
     afficher(creatures);
     filter();
+     rechercher();
 });
 
 // charger plus des  creatures
