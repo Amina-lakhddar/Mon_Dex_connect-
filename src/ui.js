@@ -1,4 +1,4 @@
-import { creatures } from "./services/api.js";
+import { creatures, rechercherPokemon, getPokemonDetail} from "./services/api.js";
 
 
 
@@ -88,53 +88,123 @@ export function afficher(creatures) {
 
 
 // // -------------------------------------------------------------
-// // 2. DÉTAIL
-// function detail(){
-//   // let liste_article =document.getElementById("grid");
-//   // console.log(liste_article.textContent);
+// 2. DÉTAIL
+export function detail(){
+  // let liste_article =document.getElementById("grid");
+  // console.log(liste_article.textContent);
   
-//   let panneau_detail=document.getElementById("detail");
-//   let articles=document.querySelectorAll("article");
+  let panneau_detail=document.getElementById("detail");
+  let articles=document.querySelectorAll("article");
   
-//   articles.forEach(function(article){
-//     article.addEventListener("click",function(){
-//       let id_crature=article.querySelector("span");
-//       let detail_creature=creatures.filter(function(creature){
-//         return creature.id===id_crature.textContent;
-//       })
-//       return panneau_detail.innerHTML=`<div class="flex items-center justify-between">
-//             <span class="font-mono text-sm text-ink">${detail_creature[0].id} · Détail</span>
-//             <button type="button" aria-label="Fermer le détail" class="btn-outline w-11 px-0">✕</button>
-//           </div>
-//           <div class="flex h-48 items-center justify-center rounded-2xl bg-brand-light">
-//             <img src="${detail_creature[0].image}" alt="" class="img_card">
-//           </div>
-//           <div class="flex items-center justify-between">
-//             <h2 class="font-display text-3xl font-extrabold text-orange-700">${detail_creature[0].name}</h2>
-//             <span class="rounded-full bg-orange-500 px-3 py-1 text-sm font-bold text-white">${detail_creature[0].type}</span>
-//           </div>
-//           <p class="text-gray-700">${detail_creature[0].description}
-//           </p>
-//           <div class="flex flex-col gap-2 text-sm">
-//             <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold text-orange-700">PV</span><span
-//                 class="h-3 rounded-full bg-ground"><span
-//                   class="block h-3 w-[30%] rounded-full bg-orange-500" style="width: ${detail_creature[0].stats.hp}%"></span></span><span
-//                 class="text-right font-mono">${detail_creature[0].stats.hp}</span></div>
-//             <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold text-orange-700">Attaque</span><span
-//                 class="h-3 rounded-full bg-ground"><span
-//                   class="block h-3 w-[33%] rounded-full bg-orange-500" style="width: ${detail_creature[0].stats.attack}%"></span></span><span
-//                 class="text-right font-mono">${detail_creature[0].stats.attack}</span></div>
-//             <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold text-orange-700">Défense</span><span
-//                 class="h-3 rounded-full bg-ground"><span
-//                   class="block h-3 w-[43%] rounded-full bg-orange-500" style="width: ${detail_creature[0].stats.defence}%"></span></span><span
-//                 class="text-right font-mono">${detail_creature[0].stats.defence}</span></div>
-//           </div>
-//           <button type="button" class="btn-primary">Ajouter à l'équipe</button>`
-      
-//     })
-//   })
+  articles.forEach(function(article){
+    article.addEventListener("click",async function(){
+        if(article.dataset.loading==="true"){
+            return;
+        }
 
-// }
+      let id_creature=article.querySelector("span");
+      let id=Number(id_creature.textContent.replace("#","").trim());
+      article.dataset.loading="true";
+      article.classList.add("opacity-50","pointer-events-none");
+
+      panneau_detail.innerHTML="<p>Chargement...</p>";
+      try{
+        let pokemon= await getPokemonDetail(id);
+        if (pokemon === null) {
+            panneau_detail.innerHTML = "<p>Erreur de chargement !</p>";
+            return;
+}
+
+        panneau_detail.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono text-sm text-ink">
+                            ${pokemon.id} · Détail
+                        </span>
+
+                        <button type="button" id="fermer-detail"
+                            aria-label="Fermer le détail"
+                            class="btn-outline w-11 px-0">
+                            ✕
+                        </button>
+                    </div>
+
+                    <div class="flex h-48 items-center justify-center rounded-2xl bg-brand-light">
+                        <img src="${pokemon.image}" alt="${pokemon.name}" class="img_card">
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <h2 class="font-display text-3xl font-extrabold text-orange-700">
+                            ${pokemon.name}
+                        </h2>
+
+                        <span class="rounded-full bg-orange-500 px-3 py-1 text-sm font-bold text-white">
+                            ${pokemon.type}
+                        </span>
+                    </div>
+
+                    <div class="flex flex-col gap-2 text-sm">
+
+                        <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2">
+                            <span class="font-bold text-orange-700">PV</span>
+                            <span class="h-3 rounded-full bg-ground">
+                                <span class="block h-3 rounded-full bg-orange-500"
+                                    style="width: ${Math.min(pokemon.stats.hp / 255 * 100, 100)}%">
+                                </span>
+                            </span>
+                            <span class="text-right font-mono">${pokemon.stats.hp}</span>
+                        </div>
+
+                        <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2">
+                            <span class="font-bold text-orange-700">Attaque</span>
+                            <span class="h-3 rounded-full bg-ground">
+                                <span class="block h-3 rounded-full bg-orange-500"
+                                    style="width: ${Math.min(pokemon.stats.attack / 255 * 100, 100)}%">
+                                </span>
+                            </span>
+                            <span class="text-right font-mono">${pokemon.stats.attack}</span>
+                        </div>
+
+                        <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2">
+                            <span class="font-bold text-orange-700">Défense</span>
+                            <span class="h-3 rounded-full bg-ground">
+                                <span class="block h-3 rounded-full bg-orange-500"
+                                    style="width: ${Math.min(pokemon.stats.defence / 255 * 100, 100)}%">
+                                </span>
+                            </span>
+                            <span class="text-right font-mono">${pokemon.stats.defence}</span>
+                        </div>
+
+                    </div>
+
+                    <div class="flex flex-col gap-2 text-sm">
+                        <p><strong>Taille :</strong> ${pokemon.height} m</p>
+                        <p><strong>Poids :</strong> ${pokemon.weight} kg</p>
+                        <p><strong>Capacités :</strong> ${pokemon.abilities.join(", ")}</p>
+                    </div>
+
+                    <button type="button" class="btn-primary">
+                        Ajouter à l'équipe
+                    </button>
+                `;
+
+                let fermer=document.getElementById("fermer-detail");
+                fermer.addEventListener("click",()=>{
+                    panneau_detail.innerHTML="";
+                });
+      }
+      catch(error){
+        panneau_detail.innerHTML="<p>Une erreur est servenue </p>";
+        console.log(error);
+      }
+      finally{
+        article.dataset.loading="false";
+        article.classList.remove("opacity-50","pointer-events-none");
+      }
+      
+    })
+  })
+
+}
 // detail();
 // // Un clic sur une carte ouvre le panneau de détail :
 // // image, description, et statistiques affichées en barres.
@@ -142,23 +212,43 @@ export function afficher(creatures) {
 
 
 // // -------------------------------------------------------------
-// // 3. RECHERCHE
-// function rechercher() {
-//     let search = document.querySelector("#search");
+// 3. RECHERCHE
+export function rechercher() {
+    let search = document.querySelector("#search");
 
-//     search.addEventListener("input", function () {
-//         let valeur = search.value.toLowerCase();
+    search.addEventListener("change", async function () {
 
-//         let resultat = creatures.filter(function (creature) {
-//             return creature.name.toLowerCase().includes(valeur);
-//         });
+        let valeur = search.value.trim().toLowerCase();
 
-//         afficher(resultat);
-//         detail();
-//     });
-// }
+        if (valeur === "") {
+            afficher(creatures);
+            detail();
+            return;
+        }
 
-// rechercher();
+        let resultat = await rechercherPokemon(valeur);
+
+        section_article.innerHTML = "";
+
+        if (resultat !== null) {
+            afficher([resultat]);
+            detail();
+        } else {
+            section_article.innerHTML = "<p>Pokémon introuvable !</p>";
+        }
+    });
+}
+
+// fonction effacer recherche : 
+export function effacerRecherche(){
+    let search=document.querySelector("#search");
+    let button_effacer=document.querySelector("#effacer");
+
+    button_effacer.addEventListener("click",()=>{
+        search.value="";
+        afficher(creatures);
+    })
+}
 // // La liste se met à jour pendant la saisie d'un nom
 // // (sans tenir compte des majuscules).
 // // -------------------------------------------------------------
@@ -178,6 +268,7 @@ export function filter(){
               return creature.type.includes(type_anglais);
             })
             afficher(resultat_type) 
+            detail()
           }
       }
     });
