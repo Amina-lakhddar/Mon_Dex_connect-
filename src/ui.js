@@ -1,3 +1,28 @@
+import { creatures } from "./services/api.js";
+
+
+
+let types={
+    "Feu": "fire",
+    "Eau": "water",
+    "Plante": "grass",
+    "Électrik": "electric",
+    "Poison": "poison",
+    "Vol": "flying",
+    "Insecte": "bug",
+    "Psy": "psychic",
+    "Sol": "ground",
+    "Roche": "rock",
+    "Spectre": "ghost",
+    "Dragon": "dragon",
+    "Ténèbres": "dark",
+    "Acier": "steel",
+    "Fée": "fairy",
+    "Combat": "fighting",
+    "Glace": "ice",
+    "Normal": "normal"
+};
+
 // =============================================================
 // script.js — Mon Dex
 // =============================================================
@@ -7,30 +32,37 @@
 
 // -------------------------------------------------------------
 // 1. AFFICHAGE
-let section_article=document.getElementById("grid");
-export function afficher(creatures){
-    section_article.innerHTML=creatures.map(function(creature){
-        return`<article class="flex flex-col gap-3  h-100 rounded-card w-[80%] bg-white border-2 border-orange-500 p-3 pb-4 transition-transform duration-300 hover:-translate-y-1 lg:w-[30%]">
-          <div class="relative flex h-36 items-center justify-center rounded-xl bg-brand-light">
-            <img src=${creature.image} alt="" class="img_card">
-            <span class="span-card">${creature.id}</span>
-          </div>
-          <div class="flex items-center justify-between gap-2">
-            <h3 class="font-display text-xl font-semibold">${creature.name}</h3>
-            <span class="rounded-full bg-orange-500 px-3 py-1 text-sm font-bold text-white">${creature.type}</span>
-          </div>
-          <p class="text-transition-transform duration-300 hover:-translate-y-1sm text-muted">${creature.level}</p>
-          <button
-              type="button"
-              class="btn-outline"
-              data-action="ajouter"
-              data-id="${creature.id}">
-              Ajouter à l'équipe
-          </button>
-        </article>`
-        
-    })
-};
+
+export let section_article = document.getElementById("grid");
+
+export function afficher(creatures) {
+    section_article.innerHTML=
+        creatures.map(function (creature) {
+            return `
+                <article class="flex flex-col gap-3 h-100 rounded-card w-[80%] bg-white border-2 border-orange-500 p-3 pb-4 transition-transform duration-300 hover:-translate-y-1 lg:w-[30%]">
+                    <div class="relative flex h-36 items-center justify-center rounded-xl bg-brand-light">
+                        <img src="${creature.image}" alt="" class="img_card">
+                        <span class="span-card">${creature.id}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-2">
+                        <h3 class="font-display text-xl font-semibold">${creature.name}</h3>
+                        <span class="rounded-full bg-orange-500 px-3 py-1 text-sm font-bold text-white">${creature.type}</span>
+                    </div>
+
+                    <p class="text-muted">${creature.level}</p>
+
+                    <button type="button" class="btn-outline"
+                        data-action="ajouter"
+                        data-id="${creature.id}">
+                        Ajouter à l'équipe
+                    </button>
+                </article>
+            `;
+        }).join("")
+    ;
+}
+
 
 // section_article.addEventListener("click", function (event) {
 
@@ -133,25 +165,23 @@ export function afficher(creatures){
 
 
 // // -------------------------------------------------------------
-// // 4. FILTRE
-// function filter(){
-//   let type_creature=document.getElementById("filters");
-//     type_creature.addEventListener("click", function (event) {
-//       if (event.target.tagName === "BUTTON") {
-//           if(event.target.textContent==="Tous"){
-//             afficher(creatures);
-//             detail();
-//           }else{
-//             let resultat_type=creatures.filter(function(creature){
-//               return creature.type===event.target.textContent;
-//             })
-//             afficher(resultat_type) 
-//             detail();
-//           }
-//       }
-//     });
-// }
-// filter();
+// 4. FILTRE
+export function filter(){
+  let type_creature=document.getElementById("filters");
+    type_creature.addEventListener("click", function (event) {
+      if (event.target.tagName === "BUTTON") {
+          if(event.target.textContent==="Tous"){
+            afficher(creatures);
+          }else{
+            let type_anglais=types[event.target.textContent];
+            let resultat_type=creatures.filter(function(creature){
+              return creature.type.includes(type_anglais);
+            })
+            afficher(resultat_type) 
+          }
+      }
+    });
+}
 // // Les boutons de type n'affichent que les créatures de ce type ;
 // // « Tous » réinitialise le filtre.
 // // La recherche et le filtre fonctionnent ENSEMBLE.
