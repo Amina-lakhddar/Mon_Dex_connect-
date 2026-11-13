@@ -1,3 +1,28 @@
+import { creatures } from "./services/api.js";
+
+
+
+let types={
+    "Feu": "fire",
+    "Eau": "water",
+    "Plante": "grass",
+    "Électrik": "electric",
+    "Poison": "poison",
+    "Vol": "flying",
+    "Insecte": "bug",
+    "Psy": "psychic",
+    "Sol": "ground",
+    "Roche": "rock",
+    "Spectre": "ghost",
+    "Dragon": "dragon",
+    "Ténèbres": "dark",
+    "Acier": "steel",
+    "Fée": "fairy",
+    "Combat": "fighting",
+    "Glace": "ice",
+    "Normal": "normal"
+};
+
 // =============================================================
 // script.js — Mon Dex
 // =============================================================
@@ -140,25 +165,23 @@ export function afficher(creatures) {
 
 
 // // -------------------------------------------------------------
-// // 4. FILTRE
-// function filter(){
-//   let type_creature=document.getElementById("filters");
-//     type_creature.addEventListener("click", function (event) {
-//       if (event.target.tagName === "BUTTON") {
-//           if(event.target.textContent==="Tous"){
-//             afficher(creatures);
-//             detail();
-//           }else{
-//             let resultat_type=creatures.filter(function(creature){
-//               return creature.type===event.target.textContent;
-//             })
-//             afficher(resultat_type) 
-//             detail();
-//           }
-//       }
-//     });
-// }
-// filter();
+// 4. FILTRE
+export function filter(){
+  let type_creature=document.getElementById("filters");
+    type_creature.addEventListener("click", function (event) {
+      if (event.target.tagName === "BUTTON") {
+          if(event.target.textContent==="Tous"){
+            afficher(creatures);
+          }else{
+            let type_anglais=types[event.target.textContent];
+            let resultat_type=creatures.filter(function(creature){
+              return creature.type.includes(type_anglais);
+            })
+            afficher(resultat_type) 
+          }
+      }
+    });
+}
 // // Les boutons de type n'affichent que les créatures de ce type ;
 // // « Tous » réinitialise le filtre.
 // // La recherche et le filtre fonctionnent ENSEMBLE.
