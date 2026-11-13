@@ -1,3 +1,4 @@
+
 export const limit=20;
 export let offset=0;
 export let BASE_URL = `https://pokeapi.co/api/v2/pokemon`;
@@ -11,6 +12,7 @@ export async function getData() {
             for (const pokem of data.results) {
                 promises.push(
                     fetch(pokem.url)
+
                         .then((response) => response.json())
                 );
             }
@@ -20,6 +22,7 @@ export async function getData() {
         .then((data) => {
             creatures = data.map(obj => transformObj(obj));
         });
+
 }
 export function transformObj(obj) {
     const ob = {
@@ -52,6 +55,7 @@ export function transformObj(obj) {
     return ob;
 }
 
+
 export function incrementerOffset(){
     offset+=limit;
 }
@@ -61,12 +65,4 @@ export function decrementerOffset(){
         offset-=limit
     }
 }
-// {
-//     id: "#001",
-//     name: "Exemple",
-//     type: "Feu",
-//     level: "Base",
-//     stats: { hp: 45, attack: 49, defence: 49 },
-//     image: "https://example.com/001.png",
-//     description: "Une courte description de la créature."
-//   }
+
