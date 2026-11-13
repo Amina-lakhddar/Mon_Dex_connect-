@@ -21,6 +21,8 @@ export async function getData() {
             creatures = data.map(obj => transformObj(obj));
         });
 }
+
+// fonction transformer l api en objet simple
 export function transformObj(obj) {
     const ob = {
         id: "#" + String(obj.id).padStart(3, "0"),
@@ -52,16 +54,24 @@ export function transformObj(obj) {
     return ob;
 }
 
+
+
+// fonction incrementer offset
 export function incrementerOffset(){
     offset+=limit;
 }
 
+
+
+//fonction decrementer offset
 export function decrementerOffset(){
     if(offset>=limit){
         offset-=limit
     }
 }
 
+
+// fonction rechercher pokemon
 export async function rechercherPokemon(nom) {
     let response = await fetch(`${BASE_URL}/${nom}`);
 
@@ -72,4 +82,36 @@ export async function rechercherPokemon(nom) {
     let data = await response.json();
 
     return transformObj(data);
+}
+
+// fonction 
+export async function getPokemonDetail(id) {
+    try {
+        let response = await fetch(`${BASE_URL}/${Number(id)}`);
+
+        if (!response.ok) {
+            return null;
+        }
+
+        let data = await response.json();
+
+        console.log("API DATA:", data);
+        console.log("Types:", data.types);
+        console.log("Abilities:", data.abilities);
+
+        let pokemon = transformObj(data);
+
+        pokemon.height = data.height / 10;
+        pokemon.weight = data.weight / 10;
+
+        pokemon.abilities = (data.abilities || []).map(function (item) {
+            return item.ability.name;
+        });
+
+        return pokemon;
+
+    } catch (error) {
+        console.log("Erreur API:", error);
+        return null;
+    }
 }
