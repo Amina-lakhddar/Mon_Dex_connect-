@@ -280,262 +280,165 @@ export function filter(){
 
 
 // // -------------------------------------------------------------
-// // 5. CRÉER UNE CRÉATURE
-// function ajouter(){
-//   let formulaire=document.querySelector("#creature-form");
-//   let level=document.getElementById("level");
-//   let id=document.getElementById("id");
-//   let nom=document.getElementById("name");
-//   let stat1=document.getElementById("stat1");
-//   let stat2=document.getElementById("stat2");
-//   let stat3=document.getElementById("stat3");
-//   let image=document.getElementById("image");
-//   let description=document.getElementById("description");
-//   let type=document.getElementById("type");
-
-//   let regexId=/^#\d{3}$/;
-//   let regexNom=/^[A-Za-zÀ-ÿ0-9][A-Za-zÀ-ÿ0-9 .'-]{1,29}$/;
-//   let regexStats=/^\d{1,3}$/;
-//   let regexImage=/^https:\/\/\S+\.(png|jpe?g|webp|gif)$/i;
-//   let regexDescription=/^[\s\S]{10,200}$/;
+// 5. CRÉER UNE CRÉATURE
 
 
-//  //Validation id :
+export function ajouter() {
+    let formulaire = document.querySelector("#creature-form");
+    let level = document.getElementById("level");
+    let id = document.getElementById("id");
+    let nom = document.getElementById("name");
+    let stat1 = document.getElementById("stat1");
+    let stat2 = document.getElementById("stat2");
+    let stat3 = document.getElementById("stat3");
+    let image = document.getElementById("image");
+    let description = document.getElementById("description");
+    let type = document.getElementById("type");
+    let btn = document.querySelector("#btn");
 
-// id.addEventListener("input",function(event){
-//   let message=document.getElementById("error-message-id");
-//     if(event.target.tagName==="INPUT"){
-//       if(regexId.test(id.value)){
-//         id.classList.remove("error");
-//         id.classList.add("success");
-         
-//         message.textContent = "Numéro valide !";
+    // Regex
+    let regexId = /^#\d{3}$/;
+    let regexNom = /^[A-Za-zÀ-ÿ0-9][A-Za-zÀ-ÿ0-9 .'-]{1,29}$/;
+    let regexStats = /^\d{1,3}$/;
+    let regexImage = /^https:\/\/\S+\.(png|jpe?g|webp|gif)(\?.*)?$/i;
+    let regexDescription = /^[\s\S]{10,200}$/;
 
-//         message.classList.remove("message-error");
-//         message.classList.add("message-success");
+    // Vérifier si l'ID existe déjà
+    function idExiste() {
+        return creatures.some(function(pokemon) {
+            return pokemon.id === id.value.trim();
+        });
+    }
 
-//       }else {
-//         id.classList.remove("success");
-//         id.classList.add("error");
+    // Vérifier le formulaire
+    function verifierFormulaire() {
+        let valide =
+            regexId.test(id.value.trim()) &&
+            !idExiste() &&
+            regexNom.test(nom.value.trim()) &&
+            regexStats.test(stat1.value) &&
+            regexStats.test(stat2.value) &&
+            regexStats.test(stat3.value) &&
+            Number(stat1.value) <= 999 &&
+            Number(stat2.value) <= 999 &&
+            Number(stat3.value) <= 999 &&
+            regexImage.test(image.value.trim()) &&
+            regexDescription.test(description.value.trim()) &&
+            type.value !== "" &&
+            level.value !== "";
 
-//         message.textContent = "Numéro invalide !";
+        btn.hidden = !valide;
+    }
 
-//         message.classList.remove("message-success");
-//         message.classList.add("message-error");
-//       }
-//       verifierFormulaire()
-//     }
-//   });
-//   // Validation name :
+    // Validation générale des champs
+    function validerChamp(champ, regex, messageId, texte) {
+        champ.addEventListener("input", function() {
+            let message = document.getElementById(messageId);
+            let valide = regex.test(champ.value.trim());
 
-//   nom.addEventListener("input",function(event){
-//     let message=document.getElementById("error-message-name")
-//     if(event.target.tagName==="INPUT"){
-//       if(regexNom.test(nom.value)){
-//         nom.classList.add("success");
-//         nom.classList.remove("error");
-//         message.textContent="Nom Valide !";
-//         message.classList.remove("message-error");
-//         message.classList.add("message-success");
-//       }else{
-//         nom.classList.remove("success");
-//         nom.classList.add("error");
+            champ.classList.toggle("success", valide);
+            champ.classList.toggle("error", !valide);
 
-//         message.textContent="Nom Invalide !";
+            message.textContent = valide
+                ? texte + " valide !"
+                : texte + " invalide !";
 
-//         message.classList.remove("message-success");
-//         message.classList.add("message-error");
-//       }
-//       verifierFormulaire()
-//     }
-//   });
+            message.classList.toggle("message-success", valide);
+            message.classList.toggle("message-error", !valide);
 
-//   // Validation statistique 1 :
-//   stat1.addEventListener("input",function(event){
-//     let message=document.getElementById("error-message-stat1")
-//     if(event.target.tagName==="INPUT"){
-//       if(regexStats.test(stat1.value)){
-//         stat1.classList.add("success");
-//         stat1.classList.remove("error");
+            verifierFormulaire();
+        });
+    }
 
-//         message.textContent="Statistique valide !";
+    // Validation ID
+    id.addEventListener("input", function() {
+        let message = document.getElementById("error-message-id");
+        let valide = regexId.test(id.value.trim());
+        let existe = idExiste();
 
-//         message.classList.add("message-success");
-//         message.classList.remove("message-error");
-//       }else{
-//         stat1.classList.remove("success");
-//         stat1.classList.add("error");
+        let resultat = valide && !existe;
 
-//         message.textContent="Statistique invalide !";
+        if (!valide) {
+            message.textContent = "Numéro invalide !";
+        } else if (existe) {
+            message.textContent = "Ce numéro existe déjà !";
+        } else {
+            message.textContent = "Numéro valide !";
+        }
 
-//         message.classList.remove("message-success");
-//         message.classList.add("message-error");
-//       }
-//       verifierFormulaire()
-//     }
-//   });
+        id.classList.toggle("success", resultat);
+        id.classList.toggle("error", !resultat);
 
-//   // Validation statistique 2 :
-//   stat2.addEventListener("input",function(event){
-//     let message=document.getElementById("error-message-stat2");
-//     if(event.target.tagName==="INPUT"){
-//       if(regexStats.test(stat2.value)){
-//         stat2.classList.add("success");
-//         stat2.classList.remove("error");
-       
-//         message.textContent="Statistique valide !";
+        message.classList.toggle("message-success", resultat);
+        message.classList.toggle("message-error", !resultat);
 
-//         message.classList.add("message-success");
-//         message.classList.remove("message-error");
-//       }else{
-//         stat2.classList.remove("success");
-//         stat2.classList.add("error");
+        verifierFormulaire();
+    });
 
-//         message.textContent="Statistique invalide !";
+    // Validation des autres champs
+    validerChamp(nom, regexNom, "error-message-name", "Nom");
+    validerChamp(stat1, regexStats, "error-message-stat1", "Statistique");
+    validerChamp(stat2, regexStats, "error-message-stat2", "Statistique");
+    validerChamp(stat3, regexStats, "error-message-stat3", "Statistique");
+    validerChamp(image, regexImage, "error-message-image", "Image");
+    validerChamp(description, regexDescription, "error-message-description", "Description");
 
-//         message.classList.remove("message-success");
-//         message.classList.add("message-error");
-//       }
-//       verifierFormulaire()
-//     }
-//   });
+    type.addEventListener("change", verifierFormulaire);
+    level.addEventListener("change", verifierFormulaire);
 
-//   // Validation statistique 3 :
-//   stat3.addEventListener("input",function(event){
-//     let message=document.getElementById("error-message-stat3")
-//     if(event.target.tagName==="INPUT"){
-//       if(regexStats.test(stat3.value)){
-//         stat3.classList.add("success");
-//         stat3.classList.remove("error");
+    // Créer une créature
+    function ajouterCreature() {
+        verifierFormulaire();
 
-//         message.textContent="Statistique valide !";
+        if (btn.hidden) {
+            return false;
+        }
 
-//         message.classList.add("message-success");
-//         message.classList.remove("message-error");
-//       }else{
-//         stat3.classList.remove("success");
-//         stat3.classList.add("error");
+        let nouvelleCreature = {
+            id: id.value.trim(),
+            name: nom.value.trim(),
+            type: type.value,
+            level: level.value,
+            stats: {
+                hp: Number(stat1.value),
+                attack: Number(stat2.value),
+                defence: Number(stat3.value)
+            },
+            image: image.value.trim(),
+            description: description.value.trim()
+        };
 
-//         message.textContent="Statistique invalide !";
+        creatures.push(nouvelleCreature);
 
-//         message.classList.remove("message-success");
-//         message.classList.add("message-error");
-//       }
-//       verifierFormulaire()
-//     }
-//   });
+        return true;
+    }
 
-//   // Validation image :
-//   image.addEventListener("input",function(event){
-//     let message=document.getElementById("error-message-image")
-//     if(event.target.tagName==="INPUT"){
-//       if(regexImage.test(image.value)){
-//         image.classList.add("success");
-//         image.classList.remove("error");
+    // Submit du formulaire
+    formulaire.addEventListener("submit", function(event) {
+        event.preventDefault();
 
-//         message.textContent="Image valide !";
+        let resultat = ajouterCreature();
 
-//         message.classList.add("message-success");
-//         message.classList.remove("message-error");
-//       }else{
-//         image.classList.remove("success");
-//         image.classList.add("error");
+        if (resultat) {
+            afficher(creatures);
+            detail();
 
-//         message.textContent="Image invalide !";
+            formulaire.reset();
+            btn.hidden = true;
 
-//         message.classList.remove("message-success");
-//         message.classList.add("message-error");
-//       }
-//       verifierFormulaire()
-//     }
-//   });
+            document.querySelector("#message-success").textContent =
+                "Créature ajoutée avec succès !";
+        }
+    });
 
-//   // Validation description :
-//   description.addEventListener("input",function(event){
-//     let message=document.getElementById("error-message-description")
-//     if(event.target.tagName==="TEXTAREA"){
-//       if(regexDescription.test(description.value)){
-//         description.classList.add("success");
-//         description.classList.remove("error");
-
-//         message.textContent="Description valide !";
-
-//         message.classList.add("message-success");
-//         message.classList.remove("message-error");
-//       }else{
-//         description.classList.remove("success");
-//         description.classList.add("error");
-
-//         message.textContent="Description invalide !";
-
-//         message.classList.remove("message-success");
-//         message.classList.add("message-error");
-//       }
-//       verifierFormulaire()
-//     }
-//   });
+    verifierFormulaire();
+}
 
 
-
-//   let btn = document.querySelector("#btn");
-
-// function verifierFormulaire() {
-//     if (
-//         regexId.test(id.value) &&
-//         regexNom.test(nom.value) &&
-//         regexStats.test(stat1.value) &&
-//         regexStats.test(stat2.value) &&
-//         regexStats.test(stat3.value) &&
-//         regexImage.test(image.value) &&
-//         regexDescription.test(description.value)
-//     ) {
-//         btn.hidden = false;
-//     } else {
-//         btn.hidden = true;
-//     }
-// }
-// function ajouterCreature() {
-//     if (
-//         regexId.test(id.value) &&
-//         regexNom.test(nom.value) &&
-//         regexStats.test(stat1.value) &&
-//         regexStats.test(stat2.value) &&
-//         regexStats.test(stat3.value) &&
-//         regexImage.test(image.value) &&
-//         regexDescription.test(description.value)
-//     ) {
-//         let nouvelleCreature = {
-//             id: id.value,
-//             name: nom.value,
-//             type: type.value,
-//             level: level.value,
-//             stats: {
-//                 hp: Number(stat1.value),
-//                 attack: Number(stat2.value),
-//                 defence: Number(stat3.value)
-//             },
-//             image: image.value,
-//             description: description.value
-//         };
-
-//         creatures.push(nouvelleCreature);
-
-//         console.log(creatures);
-//     }
-// }
-//   formulaire.addEventListener("submit",function(event){
-//     event.preventDefault();
-//     ajouterCreature();
-//     afficher(creatures);
-//     detail();
-//   })
-// }
-// ajouter();
-
-// // Validez chaque champ du formulaire avec une expression régulière
-// // (voir le tableau du brief). Affichez le message d'erreur sous le
-// // champ, et n'ajoutez jamais une créature invalide.
-// // -------------------------------------------------------------
+// Validez chaque champ du formulaire avec une expression régulière
+// (voir le tableau du brief). Affichez le message d'erreur sous le
+// champ, et n'ajoutez jamais une créature invalide.
+// -------------------------------------------------------------
 
 
 
