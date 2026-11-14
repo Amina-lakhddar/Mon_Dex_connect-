@@ -70,123 +70,168 @@ export function afficher(creatures) {
 
 // // -------------------------------------------------------------
 // 2. DÉTAIL
-export function detail(){
-  // let liste_article =document.getElementById("grid");
-  // console.log(liste_article.textContent);
-  
-  let panneau_detail=document.getElementById("detail");
-  let articles=document.querySelectorAll("article");
-  
-  articles.forEach(function(article){
-    article.addEventListener("click",async function(){
-        if(article.dataset.loading==="true"){
-            return;
-        }
 
-      let id_creature=article.querySelector("span");
-      let id=Number(id_creature.textContent.replace("#","").trim());
-      article.dataset.loading="true";
-      article.classList.add("opacity-50","pointer-events-none");
+export function detail() {
 
-      panneau_detail.innerHTML="<p>Chargement...</p>";
-      try{
-        let pokemon= await getPokemonDetail(id);
-        if (pokemon === null) {
-            panneau_detail.innerHTML = "<p>Erreur de chargement !</p>";
-            return;
-        }
-        creatureSelectionnee=pokemon;
+    let panneau_detail = document.getElementById("detail");
+    let articles = document.querySelectorAll("article");
 
-        panneau_detail.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <span class="font-mono text-sm text-ink">
-                            ${pokemon.id} · Détail
-                        </span>
+    articles.forEach(function(article) {
 
-                        <button type="button" id="fermer-detail"
-                            aria-label="Fermer le détail"
-                            class="btn-outline w-11 px-0">
-                            ✕
+        article.addEventListener("click", async function(event) {
+
+            // Ne pas ouvrir le détail si on clique sur un bouton
+            if (event.target.closest("button")) {
+                return;
+            }
+
+            if (article.dataset.loading === "true") {
+                return;
+            }
+
+            let id_creature = article.querySelector("span");
+            let id = Number(id_creature.textContent.replace("#", "").trim());
+
+            // Désactiver la carte
+            article.dataset.loading = "true";
+            article.classList.add("opacity-50", "pointer-events-none");
+
+            // Fonction charger détail
+            async function chargerDetail() {
+
+                panneau_detail.innerHTML = "<p>Chargement...</p>";
+
+                try {
+
+                    let pokemon = await getPokemonDetail(id);
+
+                    // Vide
+                    if (pokemon === null) {
+
+                        creatureSelectionnee = null;
+
+                        panneau_detail.innerHTML = `
+                            <p>Aucun Pokémon trouvé.</p>
+
+                            <button type="button" id="fermer-detail" class="btn-outline">
+                                Fermer
+                            </button>
+                        `;
+
+                        return;
+                    }
+
+                    // Succès
+                    creatureSelectionnee = pokemon;
+
+                    panneau_detail.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <span class="font-mono text-sm text-ink">
+                                ${pokemon.id} · Détail
+                            </span>
+
+                            <button type="button" id="fermer-detail"
+                                aria-label="Fermer le détail"
+                                class="btn-outline w-11 px-0">
+                                ✕
+                            </button>
+                        </div>
+
+                        <div class="flex h-48 items-center justify-center rounded-2xl bg-brand-light">
+                            <img src="${pokemon.image}" alt="${pokemon.name}" class="img_card">
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <h2 class="font-display text-3xl font-extrabold text-orange-700">
+                                ${pokemon.name}
+                            </h2>
+
+                            <span class="rounded-full bg-orange-500 px-3 py-1 text-sm font-bold text-white">
+                                ${pokemon.type}
+                            </span>
+                        </div>
+
+                        <div class="flex flex-col gap-2 text-sm">
+
+                            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2">
+                                <span class="font-bold text-orange-700">PV</span>
+                                <span class="h-3 rounded-full bg-ground">
+                                    <span class="block h-3 rounded-full bg-orange-500"
+                                        style="width: ${Math.min(pokemon.stats.hp / 255 * 100, 100)}%">
+                                    </span>
+                                </span>
+                                <span class="text-right font-mono">${pokemon.stats.hp}</span>
+                            </div>
+
+                            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2">
+                                <span class="font-bold text-orange-700">Attaque</span>
+                                <span class="h-3 rounded-full bg-ground">
+                                    <span class="block h-3 rounded-full bg-orange-500"
+                                        style="width: ${Math.min(pokemon.stats.attack / 255 * 100, 100)}%">
+                                    </span>
+                                </span>
+                                <span class="text-right font-mono">${pokemon.stats.attack}</span>
+                            </div>
+
+                            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2">
+                                <span class="font-bold text-orange-700">Défense</span>
+                                <span class="h-3 rounded-full bg-ground">
+                                    <span class="block h-3 rounded-full bg-orange-500"
+                                        style="width: ${Math.min(pokemon.stats.defence / 255 * 100, 100)}%">
+                                    </span>
+                                </span>
+                                <span class="text-right font-mono">${pokemon.stats.defence}</span>
+                            </div>
+
+                        </div>
+
+                        <div class="flex flex-col gap-2 text-sm">
+                            <p><strong>Taille :</strong> ${pokemon.height} m</p>
+                            <p><strong>Poids :</strong> ${pokemon.weight} kg</p>
+                            <p><strong>Capacités :</strong> ${pokemon.abilities.join(", ")}</p>
+                        </div>
+
+                        <button id="detail-add" type="button" class="btn-primary">
+                            Ajouter à l'équipe
                         </button>
-                    </div>
+                    `;
 
-                    <div class="flex h-48 items-center justify-center rounded-2xl bg-brand-light">
-                        <img src="${pokemon.image}" alt="${pokemon.name}" class="img_card">
-                    </div>
+                } catch (error) {
 
-                    <div class="flex items-center justify-between">
-                        <h2 class="font-display text-3xl font-extrabold text-orange-700">
-                            ${pokemon.name}
-                        </h2>
+                    // Erreur
+                    creatureSelectionnee = null;
 
-                        <span class="rounded-full bg-orange-500 px-3 py-1 text-sm font-bold text-white">
-                            ${pokemon.type}
-                        </span>
-                    </div>
+                    panneau_detail.innerHTML = `
+                        <p>Une erreur est survenue. Vérifiez votre connexion.</p>
 
-                    <div class="flex flex-col gap-2 text-sm">
+                        <button type="button" id="reessayer-detail" class="btn-outline">
+                            Réessayer
+                        </button>
 
-                        <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2">
-                            <span class="font-bold text-orange-700">PV</span>
-                            <span class="h-3 rounded-full bg-ground">
-                                <span class="block h-3 rounded-full bg-orange-500"
-                                    style="width: ${Math.min(pokemon.stats.hp / 255 * 100, 100)}%">
-                                </span>
-                            </span>
-                            <span class="text-right font-mono">${pokemon.stats.hp}</span>
-                        </div>
+                        <button type="button" id="fermer-detail" class="btn-outline">
+                            Fermer
+                        </button>
+                    `;
 
-                        <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2">
-                            <span class="font-bold text-orange-700">Attaque</span>
-                            <span class="h-3 rounded-full bg-ground">
-                                <span class="block h-3 rounded-full bg-orange-500"
-                                    style="width: ${Math.min(pokemon.stats.attack / 255 * 100, 100)}%">
-                                </span>
-                            </span>
-                            <span class="text-right font-mono">${pokemon.stats.attack}</span>
-                        </div>
+                    console.log("Erreur détail :", error);
+                }
+            }
 
-                        <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2">
-                            <span class="font-bold text-orange-700">Défense</span>
-                            <span class="h-3 rounded-full bg-ground">
-                                <span class="block h-3 rounded-full bg-orange-500"
-                                    style="width: ${Math.min(pokemon.stats.defence / 255 * 100, 100)}%">
-                                </span>
-                            </span>
-                            <span class="text-right font-mono">${pokemon.stats.defence}</span>
-                        </div>
+            await chargerDetail();
 
-                    </div>
+            // Réactiver la carte
+            article.dataset.loading = "false";
+            article.classList.remove("opacity-50", "pointer-events-none");
 
-                    <div class="flex flex-col gap-2 text-sm">
-                        <p><strong>Taille :</strong> ${pokemon.height} m</p>
-                        <p><strong>Poids :</strong> ${pokemon.weight} kg</p>
-                        <p><strong>Capacités :</strong> ${pokemon.abilities.join(", ")}</p>
-                    </div>
+            // Garder l'ID pour le bouton Réessayer
+            panneau_detail.dataset.id = id;
 
-                    <button id="detail-add" type="button" class="btn-primary">
-                        Ajouter à l'équipe
-                    </button>
-                `;
+        });
 
-                let fermer=document.getElementById("fermer-detail");
-                fermer.addEventListener("click",()=>{
-                    panneau_detail.innerHTML="";
-                });
-      }
-      catch(error){
-        panneau_detail.innerHTML="<p>Une erreur est servenue </p>";
-        console.log(error);
-      }
-      finally{
-        article.dataset.loading="false";
-        article.classList.remove("opacity-50","pointer-events-none");
-      }
-      
-    })
-  })
+    });
 
 }
+
 // detail();
 // // Un clic sur une carte ouvre le panneau de détail :
 // // image, description, et statistiques affichées en barres.
@@ -196,9 +241,47 @@ export function detail(){
 // // -------------------------------------------------------------
 // 3. RECHERCHE
 export function rechercher() {
+
     let search = document.querySelector("#search");
 
-    search.addEventListener("change", async function () {
+    async function lancerRecherche(valeur) {
+
+        // Chargement
+        section_article.innerHTML = `
+            <p>Recherche en cours...</p>
+        `;
+
+        try {
+            let resultat = await rechercherPokemon(valeur);
+
+            // Vide
+            if (resultat === null) {
+                section_article.innerHTML = `
+                    <p>Aucune créature trouvée pour "${valeur}".</p>
+                `;
+                return;
+            }
+
+            // Succès
+            afficher([resultat]);
+            detail();
+
+        } catch (error) {
+
+            // Erreur
+            section_article.innerHTML = `
+                <p>Une erreur est survenue. Vérifiez votre connexion.</p>
+
+                <button type="button"
+                        id="reessayer-recherche"
+                        class="btn-outline">
+                    Réessayer
+                </button>
+            `;
+        }
+    }
+
+    search.addEventListener("change", function () {
 
         let valeur = search.value.trim().toLowerCase();
 
@@ -208,16 +291,20 @@ export function rechercher() {
             return;
         }
 
-        let resultat = await rechercherPokemon(valeur);
+        lancerRecherche(valeur);
+    });
 
-        section_article.innerHTML = "";
+    // Réessayer
+    section_article.addEventListener("click", function(event) {
 
-        if (resultat !== null) {
-            afficher([resultat]);
-            detail();
-        } else {
-            section_article.innerHTML = "<p>Pokémon introuvable !</p>";
+        if (event.target.id === "reessayer-recherche") {
+            let valeur = search.value.trim().toLowerCase();
+
+            if (valeur !== "") {
+                lancerRecherche(valeur);
+            }
         }
+
     });
 }
 
