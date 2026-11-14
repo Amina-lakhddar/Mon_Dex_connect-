@@ -4,28 +4,47 @@ export let offset=0;
 export let BASE_URL = `https://pokeapi.co/api/v2/pokemon`;
 export let creatures = []
 export async function getData() {
-    await fetch(`${BASE_URL}?limit=${limit}&offset=${offset}`)
-        .then((response) => response.json())
-        .then((data) => {
+    return fetch(`${BASE_URL}?limit=${limit}&offset=${offset}`,
+         {cache: "no-store"}
+    )
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error("Erreur lors du chargement de la liste");
+            }
+
+            return response.json();
+        })
+        .then(function(data) {
             let promises = [];
 
             for (const pokem of data.results) {
                 promises.push(
-                    fetch(pokem.url)
+                    fetch(pokem.url,{ cache: "no-store"})
+                        .then(function(response) {
+                            if (!response.ok) {
+                                throw new Error("Erreur lors du chargement d'un Pokémon");
+                            }
 
-                        .then((response) => response.json())
+                            return response.json();
+                        })
                 );
             }
 
             return Promise.all(promises);
         })
-        .then((data) => {
-            creatures = data.map(obj => transformObj(obj));
+        .then(function(data) {
+            creatures = data.map(function(obj) {
+                return transformObj(obj);
+            });
+
+            return creatures;
+        })
+        .catch(function(error) {
+            console.log("Erreur API :", error);
+            throw error;
         });
+};
 
-}
-
-// fonction transformer l api en objet simple
 export function transformObj(obj) {
     const ob = {
         id: "#" + String(obj.id).padStart(3, "0"),
@@ -57,9 +76,6 @@ export function transformObj(obj) {
     return ob;
 }
 
-
-
-
 // fonction incrementer offset
 export function incrementerOffset(){
     offset+=limit;
@@ -76,12 +92,21 @@ export function decrementerOffset(){
 
 
 
-// fonction rechercher pokemon
+// Fonction rechercher Pokémon
 export async function rechercherPokemon(nom) {
-    let response = await fetch(`${BASE_URL}/${nom}`);
 
-    if (!response.ok) {
+    let response = await fetch(`${BASE_URL}/${nom}`, {
+        cache: "no-store"
+    });
+
+    // Pokémon introuvable
+    if (response.status === 404) {
         return null;
+    }
+
+    // Autres erreurs HTTP
+    if (!response.ok) {
+        throw new Error("Erreur lors de la recherche");
     }
 
     let data = await response.json();
@@ -89,35 +114,34 @@ export async function rechercherPokemon(nom) {
     return transformObj(data);
 }
 
-// fonction 
+
+// Fonction récupérer le détail d'un Pokémon
 export async function getPokemonDetail(id) {
-    try {
-        let response = await fetch(`${BASE_URL}/${Number(id)}`);
 
-        if (!response.ok) {
-            return null;
-        }
+    let response = await fetch(`${BASE_URL}/${Number(id)}`, {
+        cache: "no-store"
+    });
 
-        let data = await response.json();
-
-        console.log("API DATA:", data);
-        console.log("Types:", data.types);
-        console.log("Abilities:", data.abilities);
-
-        let pokemon = transformObj(data);
-
-        pokemon.height = data.height / 10;
-        pokemon.weight = data.weight / 10;
-
-        pokemon.abilities = (data.abilities || []).map(function (item) {
-            return item.ability.name;
-        });
-
-        return pokemon;
-
-    } catch (error) {
-        console.log("Erreur API:", error);
+    // Pokémon introuvable
+    if (response.status === 404) {
         return null;
     }
-}
 
+    // Autres erreurs HTTP
+    if (!response.ok) {
+        throw new Error("Erreur lors du chargement du détail");
+    }
+
+    let data = await response.json();
+
+    let pokemon = transformObj(data);
+
+    pokemon.height = data.height / 10;
+    pokemon.weight = data.weight / 10;
+
+    pokemon.abilities = (data.abilities || []).map(function(item) {
+        return item.ability.name;
+    });
+
+    return pokemon;
+};
