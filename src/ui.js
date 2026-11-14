@@ -63,25 +63,6 @@ export function afficher(creatures) {
     ;
 }
 
-
-// section_article.addEventListener("click", function (event) {
-
-//     let bouton = event.target.closest("button[data-action='ajouter']");
-
-//     if (!bouton) {
-//         return;
-//     }
-
-//     let id = bouton.dataset.id;
-
-//     let creature = creatures.find(function (element) {
-//         return String(element.id) === id;
-//     });
-
-//     if (creature) {
-//         ajouterEquipe(creature);
-//     }
-// });
 // // Supprimez les cartes écrites à la main dans index.html et
 // // construisez la grille à partir du tableau `creatures`.
 // // -------------------------------------------------------------
@@ -113,7 +94,8 @@ export function detail(){
         if (pokemon === null) {
             panneau_detail.innerHTML = "<p>Erreur de chargement !</p>";
             return;
-}
+        }
+        creatureSelectionnee=pokemon;
 
         panneau_detail.innerHTML = `
                     <div class="flex items-center justify-between">
@@ -182,7 +164,7 @@ export function detail(){
                         <p><strong>Capacités :</strong> ${pokemon.abilities.join(", ")}</p>
                     </div>
 
-                    <button type="button" class="btn-primary">
+                    <button id="detail-add" type="button" class="btn-primary">
                         Ajouter à l'équipe
                     </button>
                 `;
@@ -443,98 +425,152 @@ export function ajouter() {
 
 
 // // -------------------------------------------------------------
-// // 6. MON ÉQUIPE
-// // Boutons « Ajouter à l'équipe » et « Retirer », gérés avec UN SEUL
-// // écouteur sur la grille et UN SEUL sur l'équipe (délégation).
-// // -------------------------------------------------------------
-// let equipe = [];
+// 6. MON ÉQUIPE
+// Boutons « Ajouter à l'équipe » et « Retirer », gérés avec UN SEUL
+// écouteur sur la grille et UN SEUL sur l'équipe (délégation).
+// -------------------------------------------------------------
 
-// let section_team = document.querySelector("#team");
-// let compteur = document.querySelector("#compteur");
-// let message_regles = document.querySelector("#message-regles");
-// let emplacements = document.querySelector("#emplacements");
+let equipe = [];
+let creatureSelectionnee = null;
 
-// function ajouterEquipe(creature) {
+let compteur = document.querySelector("#compteur");
+let message_regles = document.querySelector("#message-regles");
+let emplacements = document.querySelector("#emplacements");
+let panneau_detail = document.querySelector("#detail");
+let grille = document.querySelector("#grid");
 
-//     if (equipe.some(function (element) {
-//         return element.id === creature.id;
-//     })) {
-//         message_regles.textContent = "Cette créature est déjà dans l'équipe.";
-//         return;
-//     }
+// Ajouter une créature à l'équipe
+export function ajouterEquipe(creature) {
 
-//     if (equipe.length >= 6) {
-//         message_regles.textContent = "L'équipe est complète ! Maximum 6 créatures.";
-//         return;
-//     }
+    if (equipe.some(function(element) {
+        return element.id === creature.id;
+    })) {
+        message_regles.textContent =
+            "Cette créature est déjà dans l'équipe.";
+        return;
+    }
 
-//     equipe.push(creature);
+    if (equipe.length >= 6) {
+        message_regles.textContent =
+            "L'équipe est complète ! Maximum 6 créatures.";
+        return;
+    }
 
-//     afficherEquipe();
-// }
+    equipe.push(creature);
+    afficherEquipe();
+}
 
+// Afficher l'équipe
+function afficherEquipe() {
 
+    compteur.textContent = equipe.length + "/6";
 
-// function afficherEquipe() {
+    // Mettre à jour le compteur dans le header
+    document.querySelector("#team-count").textContent = equipe.length;
 
-//     compteur.textContent = equipe.length + "/6";
+    emplacements.innerHTML = "";
 
-//     emplacements.innerHTML = "";
+    for (let i = 0; i < 6; i++) {
 
-//     for (let i = 0; i < 6; i++) {
+        if (i < equipe.length) {
 
-//         if (i < equipe.length) {
+            let creature = equipe[i];
 
-//             let creature = equipe[i];
+            emplacements.innerHTML += `
+                <div class="flex flex-col items-center gap-1 rounded-xl border border-orange-300 p-2">
+                    <img src="${creature.image}"
+                         alt="${creature.name}"
+                         class="h-12 w-12 object-contain">
 
-//             emplacements.innerHTML += `
-//                 <div class="flex flex-col items-center gap-1 rounded-xl border border-orange-300 p-2">
-//                     <img src="${creature.image}"
-//                          alt="${creature.name}"
-//                          class="h-12 w-12 object-contain">
+                    <span class="text-sm font-bold">${creature.name}</span>
 
-//                     <span class="text-sm font-bold">${creature.name}</span>
-//                     <button
-//                         type="button"
-//                         data-action="retirer"
-//                         data-id="${creature.id}"
-//                         class="btn-outline">
-//                         Retirer
-//                     </button>
-//                 </div>
-//             `;
+                    <button
+                        type="button"
+                        data-action="retirer"
+                        data-id="${creature.id}"
+                        class="btn-outline">
+                        Retirer
+                    </button>
+                </div>
+            `;
 
-//         } else {
+        } else {
 
-//             emplacements.innerHTML += `
-//                 <div class="flex h-20 items-center justify-center rounded-xl border-2 border-dashed border-orange-300">
-//                     +
-//                 </div>
-//             `;
-//         }
-//     }
+            emplacements.innerHTML += `
+                <div class="flex h-20 items-center justify-center rounded-xl border-2 border-dashed border-orange-300">
+                    +
+                </div>
+            `;
+        }
+    }
 
-//     message_regles.textContent =
-//         "Maximum 6 créatures. Chaque créature ne peut être ajoutée qu'une seule fois.";
-// }
+    message_regles.textContent =
+        "Maximum 6 créatures. Chaque créature ne peut être ajoutée qu'une seule fois.";
+}
 
-// afficherEquipe();
+// Retirer une créature
+function retirerEquipe(id) {
 
-// let bouton_detail = document.querySelector("#detail-add");
+    equipe = equipe.filter(function(creature) {
+        return creature.id !== id;
+    });
 
-// bouton_detail.addEventListener("click", function () {
+    afficherEquipe();
+}
 
-//     if (creatureSelectionnee === null) {
-//         message_regles.textContent = "Sélectionne d'abord une créature.";
-//         return;
-//     }
+// Ajouter depuis la grille (un seul listener)
+grille.addEventListener("click", function(event) {
 
-//     ajouterEquipe(creatureSelectionnee);
-// });
-// // -------------------------------------------------------------
-// // 7. RÈGLES DE L'ÉQUIPE
-// // 6 créatures au maximum, pas de doublon, un message clair quand
-// // une action est refusée, et un compteur (x/6).
+    let bouton = event.target.closest('[data-action="ajouter"]');
+
+    if (!bouton) {
+        return;
+    }
+
+    let id = bouton.dataset.id;
+
+    let creature = creatures.find(function(pokemon) {
+        return pokemon.id === id;
+    });
+
+    if (creature) {
+        ajouterEquipe(creature);
+    }
+});
+
+// Retirer depuis l'équipe (un seul listener)
+emplacements.addEventListener("click", function(event) {
+
+    let bouton = event.target.closest('[data-action="retirer"]');
+
+    if (!bouton) {
+        return;
+    }
+
+    retirerEquipe(bouton.dataset.id);
+});
+
+// Ajouter depuis le panneau détail
+panneau_detail.addEventListener("click", function(event) {
+
+    if (event.target.closest("#detail-add")) {
+
+        if (creatureSelectionnee === null) {
+            message_regles.textContent =
+                "Sélectionne d'abord une créature.";
+            return;
+        }
+
+        ajouterEquipe(creatureSelectionnee);
+    }
+});
+
+afficherEquipe();
+
+// -------------------------------------------------------------
+// 7. RÈGLES DE L'ÉQUIPE
+// 6 créatures au maximum, pas de doublon, un message clair quand
+// une action est refusée, et un compteur (x/6).
 // // -------------------------------------------------------------
 
 
