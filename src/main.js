@@ -1,5 +1,5 @@
 import { getData, creatures, incrementerOffset, decrementerOffset} from "./services/api.js";
-import { afficher, section_article ,filter, rechercher,effacerRecherche, detail} from "./ui.js";
+import { afficher, section_article ,filter, rechercher,effacerRecherche, detail,ajouter} from "./ui.js";
 
 getData().then(() => {
     afficher(creatures);
@@ -10,6 +10,8 @@ getData().then(() => {
      
 });
 
+ajouter();
+
 // charger plus des  creatures
 let button_charger = document.getElementById("charger-plus");
 
@@ -19,7 +21,7 @@ button_charger.addEventListener("click", async function () {
     await getData();
 
     afficher(creatures);
-    detail()
+    detail();
 });
 
 // revenir au precedent
